@@ -1,0 +1,25 @@
+paths:
+  raw: data/raw
+  processed: data/processed
+  figures: outputs/figures
+  queries: data/queries
+
+datasets:
+  movie: 
+    filename: data/interim/movie.csv
+    row_count: 49875
+    col_count: 15
+    embdi: data/interim/movie_first_{num_cols}-500k.emb
+  dblp:
+    filename: data/interim/dblp.csv
+    row_count: 66876
+    col_count: 4
+  fasttext:
+    file: data/interim/wemb_data_4.csv
+    row_count: 50000
+    col_count: 15
+
+models:
+  fasttext:
+    name: FastText
+    path: pretrained/crawl-300d-2M-subword.bin
