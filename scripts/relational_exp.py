@@ -41,11 +41,11 @@ def execute_projection_for_model(config, outputfile, model, m, rows, repid=1):
     )
 
 
-def run_embdi_projection(config, cnf, table_name, outputfile, m, rows, repid=1):
+def run_embdi_projection(config, cnf, table_name, outputfile, m, dim, rows, repid=1):
     embdi_db = EmbDIDatabase(
-        path=cnf["datasets"][table_name]["embdi"].format(num_cols=m),
+        path=cnf["datasets"][table_name]["embdi"].format(num_cols=m, dim=dim),
         config=config,
-        name="EmbDI",
+        name=f"EmbDI_{dim}",
     )
     execute_projection_for_model(config, outputfile, embdi_db, m, rows, repid)
 
@@ -186,12 +186,12 @@ def execute_selection_for_model(
 
 
 def run_embdi_selection(
-    config, cnf, table_name, outputfile, m, queries, min_t, max_t, step, topk=False
+    config, cnf, table_name, outputfile, m, dim, queries, min_t, max_t, step, topk=False
 ):
     embdi_db = EmbDIDatabase(
-        path=cnf["datasets"][table_name]["embdi"].format(num_cols=m),
+        path=cnf["datasets"][table_name]["embdi"].format(num_cols=m, dim=dim),
         config=config,
-        name="EmbDI",
+        name=f"EmbDI_{dim}",
     )
     embdi_results = execute_selection_for_model(
         config, embdi_db, m, queries, min_t, max_t, step, topk=topk
@@ -265,10 +265,10 @@ def run_threshold_selection(
     selection_family = "topk" if topk else "threshold"
 
     outputfile = (
-        f"{cnf['paths']['processed']}/{selection_family}_selection_{table_name}.csv"
+        f"{cnf['paths']['processed']}/{selection_family}_{q_path}_{table_name}.csv"
     )
 
-    for m in range(2, cnf["datasets"][table_name]["col_count"] + 1):
+    for m in range(1, cnf["datasets"][table_name]["col_count"] + 1):
         # Load queries
         with open(
             f"{cnf['paths']['queries']}/{q_path}_{table_name}_first_{m}.json", "r"
@@ -287,18 +287,20 @@ def run_threshold_selection(
         print("Embdi model...")
 
         # =======  EMBDI
-        run_embdi_selection(
-            config,
-            cnf,
-            table_name,
-            outputfile,
-            m,
-            queries,
-            min_t,
-            max_t,
-            step,
-            topk=topk,
-        )
+        for dim in [300, 512]:
+            run_embdi_selection(
+                config,
+                cnf,
+                table_name,
+                outputfile,
+                m,
+                dim,
+                queries,
+                min_t,
+                max_t,
+                step,
+                topk=topk,
+            )
 
         for ri in range(rep):
             print(f"Repetition {ri + 1}/{rep} for HDC models...")
@@ -360,7 +362,10 @@ def run_projection(cnf, table_name="movie", n_rows=100, rep=3):
         rows = duckdb.sql(f"select * from db where id in {row_idx.tolist()}").fetchall()
 
         # =======  EMBDI
-        run_embdi_projection(config, cnf, table_name, outputfile, m, rows, repid=1)
+        for dim in [300, 512]:
+            run_embdi_projection(
+                config, cnf, table_name, outputfile, m, dim, rows, repid=1
+            )
 
         for ri in range(rep):
             print(f"Repetition {ri + 1}/{rep} for HDC models...")
@@ -381,12 +386,12 @@ if __name__ == "__main__":
     cnf = load_config()
     run_threshold_selection(
         cnf,
-        table_name="movie",
-        q_path="equality",
-        rep=1,
-        min_t=0.1,
-        max_t=1,
+        table_name="dblp",
+        q_path="nonequality",
+        rep=3,
+        min_t=-0.3,
+        max_t=0.5,
         step=0.05,
-        topk=True,
+        topk=False,
     )
-    # run_projection(cnf, table_name="movie", n_rows=50, rep=1)
+    # run_projection(cnf, table_name="movie", n_rows=50, rep=3)

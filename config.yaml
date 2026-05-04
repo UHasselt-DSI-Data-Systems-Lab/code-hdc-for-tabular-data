@@ -9,11 +9,12 @@ datasets:
     filename: data/interim/movie.csv
     row_count: 49875
     col_count: 15
-    embdi: data/interim/movie_first_{num_cols}-500k.emb
+    embdi: data/interim/movie_first_{num_cols}-500k_{dim}.emb
   dblp:
     filename: data/interim/dblp.csv
     row_count: 66876
     col_count: 4
+    embdi: data/interim/dblp_first_{num_cols}-1m_{dim}.emb
   fasttext:
     file: data/interim/wemb_data_4.csv
     row_count: 50000

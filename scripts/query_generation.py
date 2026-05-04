@@ -83,7 +83,7 @@ def query_parser(query):
 
 if __name__ == "__main__":
     generate_queries_for_all_n(
-        dataset_name="movie", max_m=15, queries_per_n=10, eq="equality"
+        dataset_name="dblp", max_m=4, queries_per_n=10, eq="equality"
     )
 
     # queries = generate_queries(dataset_name, queries_per_n=2)
