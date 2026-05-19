@@ -46,7 +46,7 @@ Core scripts live in [scripts/](scripts/):
 - `relational_exp.py` — run relational/experiment workflows
 - `embdi_database.py`, `hdc_database.py` — dataset/DB helpers
 
-
+The generation of EmbDI embeddings is not included as part of our code.
 
 ## Notebooks
 
