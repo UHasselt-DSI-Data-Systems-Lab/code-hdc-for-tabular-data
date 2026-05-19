@@ -4,6 +4,8 @@ paths:
   figures: outputs/figures
   queries: data/queries
 
+seed: 0
+
 datasets:
   movie: 
     filename: data/interim/movie.csv
