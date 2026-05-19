@@ -518,6 +518,8 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,tex
 
-data/
 
-pretrained/
+*.bin
+*.emb
+*.csv
+

@@ -1,7 +1,21 @@
+from math import sqrt
+import os
+import random
 from pathlib import Path
 import yaml
 import re
-import os
+
+import numpy as np
+import torch
+
+
+def set_seed(seed: int) -> None:
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 def load_config(path: str = "config.yaml") -> dict:
@@ -48,3 +62,20 @@ def save_dataframe(df, file_path):
     # mode='a' appends to the file
     # header=not file_exists ensures the column names are only written once
     df.to_csv(file_path, mode="a", index=False, header=not file_exists)
+
+
+def stdev_by_dim(m, n, dim):
+    """
+    Predicted standard deviation of the similarity for row retrieval.
+    """
+    # return sqrt((4 * m + 2 * n + 9) / (2 * m * dim))
+    return sqrt(
+        (8 * dim * m - 8 * dim + 8 * m + 4 * dim * n + n - 8) / (4 * m * dim * dim)
+    )
+
+
+def predicted_by_dim(m, n, dim):
+    """
+    Advised threshold value tau(m,n,dim) for equality predicates.
+    """
+    return round(sqrt(n / m) - stdev_by_dim(m, n, dim), 2)

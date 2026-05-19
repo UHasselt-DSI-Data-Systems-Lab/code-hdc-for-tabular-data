@@ -87,7 +87,7 @@ class ExperimentConfig:
 
     def add_value(self, value: str):
         if value not in self.cells:
-            new_id = len(self.columns_r) + len(self.cells)
+            new_id = len(self.columns_r) + len(self.cells)  # - 1
             self.cells[value] = new_id
             self.cells_r[new_id] = value
             return new_id
